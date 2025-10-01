@@ -23,17 +23,21 @@ const MovieCard = ({
           resizeMode="cover"
         />
 
-        <Text className="text-white text-sm mt-2 font-bold" numberOfLines={1}>{title}</Text>
+        <Text className="text-white text-sm mt-2 font-bold" numberOfLines={1}>
+          {title}
+        </Text>
 
         <View className="flex-row items-center justify-center gap-x-1">
           <Image source={icons.star} className="size-4" />
 
-          <Text className="text-xs text-white font-bold uppercase">{Math.round(vote_average / 2)}</Text>
+          <Text className="text-xs text-white font-bold uppercase">
+            {Math.round(vote_average / 2)}
+          </Text>
         </View>
 
         <View className="flex-row items-center justify-center">
           <Text className="text-xs text-light-300 font-medium mt-1">
-              {release_date?.split("-")[0]}
+            {release_date?.split("-")[0]}
           </Text>
         </View>
       </TouchableOpacity>
