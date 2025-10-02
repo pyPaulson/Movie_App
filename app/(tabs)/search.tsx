@@ -46,7 +46,9 @@ const Search = () => {
             </View>
 
             <View className="my-5">
-              <SearchBar placeholder={"Search Movies..."} />
+              <SearchBar placeholder={"Search Movies..."} onPress={function (): void {
+                throw new Error("Function not implemented.");
+              } } />
             </View>
 
             {moviesLoading && (
