@@ -55,7 +55,7 @@ const Search = () => {
               <ActivityIndicator
                 size="large"
                 color="#0000ff"
-                className="my-3"
+                className="my-3 mx-1"
               />
             )}
 
