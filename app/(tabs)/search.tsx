@@ -3,19 +3,36 @@ import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api";
+import { updateSearchCount } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
-import { useRouter } from "expo-router";
-import React from "react";
-import { ActivityIndicator, FlatList, Image, View, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
 
 const Search = () => {
-  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     data: movies,
     loading: moviesLoading,
+    refetch: refetchMovies,
+    reset: resetMovies,
     error: moviesError,
-  } = useFetch(() => fetchMovies({ query: "" }));
+  } = useFetch(() => fetchMovies({ query: searchQuery }), false);
+  
+  useEffect(() => {
+
+    updateSearchCount(searchQuery, movies?.results[0]);
+    
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.trim()) {
+        refetchMovies();
+      } else {
+        resetMovies();
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   return (
     <View className="flex-1 bg-primary">
@@ -46,9 +63,11 @@ const Search = () => {
             </View>
 
             <View className="my-5">
-              <SearchBar placeholder={"Search Movies..."} onPress={function (): void {
-                throw new Error("Function not implemented.");
-              } } />
+              <SearchBar
+                placeholder={"Search Movies..."}
+                value={searchQuery}
+                onChangeText={(text: string) => setSearchQuery(text)}
+              />
             </View>
 
             {moviesLoading && (
@@ -63,13 +82,25 @@ const Search = () => {
               <Text className="text-red-500">Error: {moviesError.message}</Text>
             )}
 
-            {!moviesLoading && !moviesError && 'SEARCH TERM'.trim() && movies?.results.length > 0 && (
-              <Text className="text-xl text-white font-bold">
-                Search results for {' '}
-                <Text className="text-accent"> SEARCH TERM</Text>
-              </Text>
-            )}
+            {!moviesLoading &&
+              !moviesError &&
+              searchQuery.trim() &&
+              movies?.results.length > 0 && (
+                <Text className="text-xl text-white font-bold">
+                  Search Results for{" "}
+                  <Text className="text-accent"> {searchQuery} </Text>
+                </Text>
+              )}
           </>
+        }
+        ListEmptyComponent={
+          !moviesLoading && !moviesError && searchQuery.trim().length > 0 ? (
+            <View className="mt-10 px-5">
+              <Text className="text-gray-500 text-lg text-center">
+                {searchQuery.trim() ? "No movies found" : "Search for movies!"}
+              </Text>
+            </View>
+          ) : null
         }
       />
     </View>
